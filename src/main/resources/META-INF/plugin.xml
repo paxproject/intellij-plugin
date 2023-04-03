@@ -1,18 +1,20 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.warfaj.paxintellijplugin</id>
-    <name>pax-intellij-plugin Template</name>
+    <name>Pax</name>
     <vendor>warfaj</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
-
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.warfaj.paxintellijplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <fileType
+                name="Pax File"
+                implementationClass="rs.pax.paxintellijplugin.PaxFileType"
+                fieldName="INSTANCE"
+                language="Pax"
+                extensions="pax"/>
+        <lang.parserDefinition
+                language="Pax"
+                implementationClass="rs.pax.paxintellijplugin.PaxParserDefinition"/>
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.warfaj.paxintellijplugin.listeners.MyFrameStateListener" topic="com.intellij.ide.FrameStateListener"/>
-    </applicationListeners>
 </idea-plugin>

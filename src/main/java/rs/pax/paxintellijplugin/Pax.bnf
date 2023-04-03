@@ -1,0 +1,182 @@
+{
+  parserClass="rs.pax.paxintellijplugin.parser.PaxParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Pax"
+  psiImplClassSuffix="Impl"
+  psiPackage="rs.pax.paxintellijplugin.psi"
+  psiImplPackage="rs.pax.paxintellijplugin.psi.impl"
+
+  elementTypeHolderClass="rs.pax.paxintellijplugin.psi.PaxTypes"
+  elementTypeClass="rs.pax.paxintellijplugin.psi.PaxElementType"
+  tokenTypeClass="rs.pax.paxintellijplugin.psi.PaxTokenType"
+
+  tokens=[
+      pascalidentifier='regexp:[A-Z]\w*'
+      identifier='regexp:\p{Alpha}\w*'
+      asciidigit='regexp:\d'
+      stringlit='regexp:"([^"\\]|\\.)*"'
+      eq="="
+      subclass="::"
+      lparen="("
+      rparen=")"
+      rcurly="}"
+      lcurly="{"
+      comma=','
+      at="@"
+      xoadd="+"
+      xobool_and="&&"
+      xobool_or="||"
+      xo_div = "/"
+      xo_exp = "^"
+      xo_mod = "%%"
+      xo_mul = "*"
+      xo_rel_eq = "=="
+      xo_rel_gt = ">"
+      xo_rel_gte = ">="
+      xo_rel_lt = "<"
+      xo_rel_lte = "<="
+      xo_rel_neq = "!="
+      xo_tern_then = "?"
+      xo_neg = "-"
+      xo_bool_not = "!"
+      xo_percent="%"
+      xo_range_exclusive = ".."
+      xo_range_inclusive = "..."
+      xo_dollar="$"
+      dot='.'
+      hash="#"
+      comma=","
+      colon=":"
+      lsquare="["
+      rsquare="]"
+      if_keyword="if"
+      for_keyword="for"
+      in_keyword="in"
+      slot_keyword="slot"
+      space='regexp:\s+'
+      comment='regexp:((/[*])([\s\S]+)([*]/))|([/]{2}[^\n]+)'
+      any="regexp:."
+    ]
+}
+paxFile ::= pax_component_definition*
+
+// This grammar is based off Pax Language PEG (see: pax/pax-compiler/src/pax.pest)
+
+pax_component_definition ::= (root_tag_pair | settings_block_declaration | events_block_declaration)+
+root_tag_pair ::= any_tag_pair
+
+any_tag_pair ::= statement_control_flow | matched_tag | self_closing_tag
+any_template_value ::= literal_value | expression_wrapped | identifier
+
+ matched_tag ::= open_tag  inner_nodes  closing_tag
+
+open_tag ::= '<' pascalidentifier  attribute_key_value_pair*  '>'
+closing_tag ::= {'<'  '/'  '>'}
+inner_nodes ::= { node_inner_content | (any_tag_pair)* }
+node_inner_content ::= { literal_value | expression_wrapped }
+
+
+//Describes an attribute k/v pair like `id="some_element"`. Supports expressions.
+attribute_key_value_pair ::= {attribute_event_binding | (identifier '=' any_template_value)}
+attribute_event_id ::= {'@'  identifier}
+attribute_event_binding ::= {attribute_event_id  '=' literal_function}
+
+self_closing_tag ::= '<'  pascalidentifier  attribute_key_value_pair*  '/'  '>'
+
+/// BEGIN SETTINGS
+
+settings_block_declaration ::= {'@'  "settings"  '{' selector_block*  '}'}
+selector_block ::= {selector  literal_object}
+literal_object ::= { pascalidentifier?  '{'  settings_key_value_pair*  '}' }
+
+selector ::= {('.' | '#')  identifier}
+
+settings_key_value_pair ::= { settings_key  settings_value  ','? }
+settings_key ::= { identifier  ':' }
+settings_value ::= { literal_value | literal_object | expression_wrapped }
+
+/// BEGIN EVENTS
+
+events_block_declaration ::= {'@'  "events"  '{'  events_key_value_pair*  '}'}
+events_key_value_pair ::= { events_key  events_value  ','? }
+events_key ::= { identifier  ':' }
+events_value ::= { literal_function | function_list }
+literal_function ::= { "self." ?  identifier  ','? }
+function_list ::= {'['  literal_function*  ']'}
+
+literal_value ::=  literal_number_with_unit | literal_number | literal_tuple | literal_enum_value | stringlit
+literal_number_with_unit ::= { literal_number  literal_number_unit }
+literal_number ::= {literal_number_float | literal_number_integer}
+literal_number_integer ::= {(!('.')  asciidigit)+ }
+literal_number_float ::= {asciidigit *  '.'  asciidigit+}
+literal_number_unit ::= {('%' | "px")}
+literal_tuple ::= {('(')  literal_value  (','  literal_value)*  (')')}
+
+literal_enum_value ::= {pascalidentifier  ('::'  identifier)*  ('(' literal_enum_args_list ')')? }
+literal_enum_args_list ::= {literal_value  (','  literal_value)*}
+
+literal_tuple_access ::= {identifier  '.'  literal_number_integer}
+
+/// BEGIN EXPRESSIONS (PAXEL)
+
+expression_body ::=   { xo_prefix*  xo_primary  (xo_infix  xo_prefix*  xo_primary )* }
+
+expression_wrapped ::= {
+    '{'  expression_body  '}'
+}
+
+expression_grouped ::= { '('  expression_body  ')'  literal_number_unit? }
+
+xo_primary ::= { expression_grouped | xo_function_call | xo_object | xo_literal | xo_range | xo_tuple | xo_symbol }
+
+xo_prefix ::= {xo_neg | xo_bool_not}
+
+xo_infix ::= {
+    xo_add |
+    xo_bool_and |
+    xo_bool_or |
+    xo_div |
+    xo_exp |
+    xo_mod |
+    xo_mul |
+    xo_rel_eq |
+    xo_rel_gt |
+    xo_rel_gte |
+    xo_rel_lt |
+    xo_rel_lte |
+    xo_rel_neq |
+    xo_sub |
+    xo_tern_then |
+    xo_tern_else
+}
+
+xo_range ::= { (xo_literal | xo_symbol)  (xo_range_inclusive | xo_range_exclusive)  (xo_literal | xo_symbol)}
+
+xo_literal ::= {literal_enum_value | literal_tuple_access | literal_number_with_unit | literal_number  | string | literal_tuple }
+
+xo_object ::= { identifier?  '{' xo_object_settings_key_value_pair*  '}' }
+xo_object_settings_key_value_pair ::= { settings_key  expression_body  ','? }
+
+xo_symbol ::= { '$'?  identifier  (('.'  identifier) | ('['  expression_body  ']') )* }
+xo_tuple ::= { "("  expression_body  (","  expression_body)*  ")"}
+
+xo_function_call ::= {identifier  (('::')  identifier)*  ('(' xo_function_args_list ')')}
+xo_function_args_list ::= {(expression_body  (','  expression_body)*)?}
+
+/// BEGIN CONTROL FLOW
+
+statement_control_flow ::= {(statement_if | statement_for | statement_slot)}
+
+statement_if ::= {"if"  expression_body  '{'  inner_nodes  '}'} //FUTURE: support else, else if
+statement_for ::= {'for'  statement_for_predicate_declaration  'in'  statement_for_source  '{'  inner_nodes  '}'}
+statement_slot ::= {'slot'  expression_body}
+
+statement_for_predicate_declaration ::= {
+    identifier |
+    ('('  identifier  ',' identifier ')')
+}
+
+statement_for_source ::= { xo_range | xo_symbol }
+
