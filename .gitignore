@@ -2,5 +2,5 @@
 .idea
 .qodana
 build
-.pem
-.crt
+*.pem
+*.crt
