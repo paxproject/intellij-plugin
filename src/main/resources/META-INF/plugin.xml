@@ -16,5 +16,10 @@
         <lang.parserDefinition
                 language="Pax"
                 implementationClass="rs.pax.paxintellijplugin.PaxParserDefinition"/>
+        <lang.syntaxHighlighterFactory
+                language="Pax"
+                implementationClass="rs.pax.paxintellijplugin.PaxSyntaxHighlighterFactory"/>
+        <colorSettingsPage
+                implementation="rs.pax.paxintellijplugin.PaxColorSettingsPage"/>
     </extensions>
 </idea-plugin>
