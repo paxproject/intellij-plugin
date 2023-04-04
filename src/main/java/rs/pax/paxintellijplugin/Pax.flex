@@ -26,7 +26,7 @@ EOL=\R
 WHITE_SPACE=\s+
 
 PASCALIDENTIFIER=[A-Z][a-zA-Z_0-9]*
-IDENTIFIER=[:letter:][a-zA-Z_0-9]*
+LOWERIDENTIFIER=[a-z][a-zA-Z_0-9]*
 ASCIIDIGIT=[0-9]
 STRINGLIT=\"([^\"\\]|\\.)*\"
 SPACE=[ \t\n\x0B\f\r]+
@@ -45,9 +45,9 @@ ANY=.
   "{"                     { return LCURLY; }
   ","                     { return COMMA; }
   "@"                     { return AT; }
-  "+"                     { return XOADD; }
-  "&&"                    { return XOBOOL_AND; }
-  "||"                    { return XOBOOL_OR; }
+  "+"                     { return XO_ADD; }
+  "&&"                    { return XO_BOOL_AND; }
+  "||"                    { return XO_BOOL_OR; }
   "/"                     { return XO_DIV; }
   "^"                     { return XO_EXP; }
   "%%"                    { return XO_MOD; }
@@ -74,15 +74,13 @@ ANY=.
   "for"                   { return FOR_KEYWORD; }
   "in"                    { return IN_KEYWORD; }
   "slot"                  { return SLOT_KEYWORD; }
-  "xo_add"                { return XO_ADD; }
-  "xo_bool_and"           { return XO_BOOL_AND; }
-  "xo_bool_or"            { return XO_BOOL_OR; }
-  "xo_sub"                { return XO_SUB; }
+  "@events"               { return EVENTS; }
+  "@settings"             { return SETTINGS; }
   "xo_tern_else"          { return XO_TERN_ELSE; }
   "string"                { return STRING; }
 
   {PASCALIDENTIFIER}      { return PASCALIDENTIFIER; }
-  {IDENTIFIER}            { return IDENTIFIER; }
+  {LOWERIDENTIFIER}       { return LOWERIDENTIFIER; }
   {ASCIIDIGIT}            { return ASCIIDIGIT; }
   {STRINGLIT}             { return STRINGLIT; }
   {SPACE}                 { return SPACE; }

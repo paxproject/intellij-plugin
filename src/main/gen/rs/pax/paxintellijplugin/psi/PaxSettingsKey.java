@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface PaxSettingsKey extends PsiElement {
 
   @NotNull
-  PsiElement getIdentifier();
+  PaxIdentifier getIdentifier();
 
 }

@@ -10,4 +10,7 @@ public interface PaxXoSymbol extends PsiElement {
   @NotNull
   List<PaxExpressionBody> getExpressionBodyList();
 
+  @NotNull
+  List<PaxIdentifier> getIdentifierList();
+
 }

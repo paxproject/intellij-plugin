@@ -28,15 +28,15 @@ public class PaxXoObjectImpl extends ASTWrapperPsiElement implements PaxXoObject
   }
 
   @Override
-  @NotNull
-  public List<PaxXoObjectSettingsKeyValuePair> getXoObjectSettingsKeyValuePairList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, PaxXoObjectSettingsKeyValuePair.class);
+  @Nullable
+  public PaxIdentifier getIdentifier() {
+    return findChildByClass(PaxIdentifier.class);
   }
 
   @Override
-  @Nullable
-  public PsiElement getIdentifier() {
-    return findChildByType(IDENTIFIER);
+  @NotNull
+  public List<PaxXoObjectSettingsKeyValuePair> getXoObjectSettingsKeyValuePairList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PaxXoObjectSettingsKeyValuePair.class);
   }
 
 }

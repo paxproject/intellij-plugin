@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface PaxSelector extends PsiElement {
 
   @NotNull
-  PsiElement getIdentifier();
+  PaxIdentifier getIdentifier();
 
 }

@@ -63,6 +63,10 @@ public class PaxVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitIdentifier(@NotNull PaxIdentifier o) {
+    visitPsiElement(o);
+  }
+
   public void visitInnerNodes(@NotNull PaxInnerNodes o) {
     visitPsiElement(o);
   }

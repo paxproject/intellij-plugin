@@ -29,14 +29,14 @@ public class PaxLiteralTupleAccessImpl extends ASTWrapperPsiElement implements P
 
   @Override
   @NotNull
-  public PaxLiteralNumberInteger getLiteralNumberInteger() {
-    return findNotNullChildByClass(PaxLiteralNumberInteger.class);
+  public PaxIdentifier getIdentifier() {
+    return findNotNullChildByClass(PaxIdentifier.class);
   }
 
   @Override
   @NotNull
-  public PsiElement getIdentifier() {
-    return findNotNullChildByType(IDENTIFIER);
+  public PaxLiteralNumberInteger getLiteralNumberInteger() {
+    return findNotNullChildByClass(PaxLiteralNumberInteger.class);
   }
 
 }

@@ -29,8 +29,8 @@ public class PaxEventsKeyImpl extends ASTWrapperPsiElement implements PaxEventsK
 
   @Override
   @NotNull
-  public PsiElement getIdentifier() {
-    return findNotNullChildByType(IDENTIFIER);
+  public PaxIdentifier getIdentifier() {
+    return findNotNullChildByClass(PaxIdentifier.class);
   }
 
 }

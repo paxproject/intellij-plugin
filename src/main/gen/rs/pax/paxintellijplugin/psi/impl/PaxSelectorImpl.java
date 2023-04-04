@@ -29,8 +29,8 @@ public class PaxSelectorImpl extends ASTWrapperPsiElement implements PaxSelector
 
   @Override
   @NotNull
-  public PsiElement getIdentifier() {
-    return findNotNullChildByType(IDENTIFIER);
+  public PaxIdentifier getIdentifier() {
+    return findNotNullChildByClass(PaxIdentifier.class);
   }
 
 }

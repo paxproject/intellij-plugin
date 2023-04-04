@@ -5,9 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface PaxEventsKey extends PsiElement {
+public interface PaxIdentifier extends PsiElement {
 
-  @NotNull
-  PaxIdentifier getIdentifier();
+  @Nullable
+  PsiElement getLoweridentifier();
+
+  @Nullable
+  PsiElement getPascalidentifier();
 
 }

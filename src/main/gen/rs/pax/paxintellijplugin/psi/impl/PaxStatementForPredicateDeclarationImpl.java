@@ -27,4 +27,10 @@ public class PaxStatementForPredicateDeclarationImpl extends ASTWrapperPsiElemen
     else super.accept(visitor);
   }
 
+  @Override
+  @NotNull
+  public List<PaxIdentifier> getIdentifierList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PaxIdentifier.class);
+  }
+
 }

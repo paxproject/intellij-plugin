@@ -7,6 +7,9 @@ import com.intellij.psi.PsiElement;
 
 public interface PaxLiteralEnumValue extends PsiElement {
 
+  @NotNull
+  List<PaxIdentifier> getIdentifierList();
+
   @Nullable
   PaxLiteralEnumArgsList getLiteralEnumArgsList();
 

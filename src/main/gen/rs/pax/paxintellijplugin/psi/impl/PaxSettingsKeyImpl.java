@@ -29,8 +29,8 @@ public class PaxSettingsKeyImpl extends ASTWrapperPsiElement implements PaxSetti
 
   @Override
   @NotNull
-  public PsiElement getIdentifier() {
-    return findNotNullChildByType(IDENTIFIER);
+  public PaxIdentifier getIdentifier() {
+    return findNotNullChildByClass(PaxIdentifier.class);
   }
 
 }

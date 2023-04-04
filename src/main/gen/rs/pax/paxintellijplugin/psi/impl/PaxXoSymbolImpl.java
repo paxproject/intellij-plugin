@@ -33,4 +33,10 @@ public class PaxXoSymbolImpl extends ASTWrapperPsiElement implements PaxXoSymbol
     return PsiTreeUtil.getChildrenOfTypeAsList(this, PaxExpressionBody.class);
   }
 
+  @Override
+  @NotNull
+  public List<PaxIdentifier> getIdentifierList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PaxIdentifier.class);
+  }
+
 }

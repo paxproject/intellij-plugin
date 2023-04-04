@@ -28,6 +28,12 @@ public class PaxLiteralEnumValueImpl extends ASTWrapperPsiElement implements Pax
   }
 
   @Override
+  @NotNull
+  public List<PaxIdentifier> getIdentifierList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PaxIdentifier.class);
+  }
+
+  @Override
   @Nullable
   public PaxLiteralEnumArgsList getLiteralEnumArgsList() {
     return findChildByClass(PaxLiteralEnumArgsList.class);

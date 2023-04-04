@@ -14,6 +14,6 @@ public interface PaxAttributeKeyValuePair extends PsiElement {
   PaxAttributeEventBinding getAttributeEventBinding();
 
   @Nullable
-  PsiElement getIdentifier();
+  PaxIdentifier getIdentifier();
 
 }

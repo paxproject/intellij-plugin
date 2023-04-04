@@ -7,4 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface PaxClosingTag extends PsiElement {
 
+  @NotNull
+  PsiElement getPascalidentifier();
+
 }

@@ -22,6 +22,7 @@ public interface PaxTypes {
   IElementType EXPRESSION_GROUPED = new PaxElementType("EXPRESSION_GROUPED");
   IElementType EXPRESSION_WRAPPED = new PaxElementType("EXPRESSION_WRAPPED");
   IElementType FUNCTION_LIST = new PaxElementType("FUNCTION_LIST");
+  IElementType IDENTIFIER = new PaxElementType("IDENTIFIER");
   IElementType INNER_NODES = new PaxElementType("INNER_NODES");
   IElementType LITERAL_ENUM_ARGS_LIST = new PaxElementType("LITERAL_ENUM_ARGS_LIST");
   IElementType LITERAL_ENUM_VALUE = new PaxElementType("LITERAL_ENUM_VALUE");
@@ -73,29 +74,28 @@ public interface PaxTypes {
   IElementType COMMENT = new PaxTokenType("comment");
   IElementType DOT = new PaxTokenType(".");
   IElementType EQ = new PaxTokenType("=");
+  IElementType EVENTS = new PaxTokenType("@events");
   IElementType FOR_KEYWORD = new PaxTokenType("for");
   IElementType HASH = new PaxTokenType("#");
-  IElementType IDENTIFIER = new PaxTokenType("identifier");
   IElementType IF_KEYWORD = new PaxTokenType("if");
   IElementType IN_KEYWORD = new PaxTokenType("in");
   IElementType LCURLY = new PaxTokenType("{");
+  IElementType LOWERIDENTIFIER = new PaxTokenType("loweridentifier");
   IElementType LPAREN = new PaxTokenType("(");
   IElementType LSQUARE = new PaxTokenType("[");
   IElementType PASCALIDENTIFIER = new PaxTokenType("pascalidentifier");
   IElementType RCURLY = new PaxTokenType("}");
   IElementType RPAREN = new PaxTokenType(")");
   IElementType RSQUARE = new PaxTokenType("]");
+  IElementType SETTINGS = new PaxTokenType("@settings");
   IElementType SLOT_KEYWORD = new PaxTokenType("slot");
   IElementType STRING = new PaxTokenType("string");
   IElementType STRINGLIT = new PaxTokenType("stringlit");
   IElementType SUBCLASS = new PaxTokenType("::");
-  IElementType XOADD = new PaxTokenType("+");
-  IElementType XOBOOL_AND = new PaxTokenType("&&");
-  IElementType XOBOOL_OR = new PaxTokenType("||");
-  IElementType XO_ADD = new PaxTokenType("xo_add");
-  IElementType XO_BOOL_AND = new PaxTokenType("xo_bool_and");
+  IElementType XO_ADD = new PaxTokenType("+");
+  IElementType XO_BOOL_AND = new PaxTokenType("&&");
   IElementType XO_BOOL_NOT = new PaxTokenType("!");
-  IElementType XO_BOOL_OR = new PaxTokenType("xo_bool_or");
+  IElementType XO_BOOL_OR = new PaxTokenType("||");
   IElementType XO_DIV = new PaxTokenType("/");
   IElementType XO_DOLLAR = new PaxTokenType("$");
   IElementType XO_EXP = new PaxTokenType("^");
@@ -111,7 +111,6 @@ public interface PaxTypes {
   IElementType XO_REL_LT = new PaxTokenType("<");
   IElementType XO_REL_LTE = new PaxTokenType("<=");
   IElementType XO_REL_NEQ = new PaxTokenType("!=");
-  IElementType XO_SUB = new PaxTokenType("xo_sub");
   IElementType XO_TERN_ELSE = new PaxTokenType("xo_tern_else");
   IElementType XO_TERN_THEN = new PaxTokenType("?");
 
@@ -159,6 +158,9 @@ public interface PaxTypes {
       }
       else if (type == FUNCTION_LIST) {
         return new PaxFunctionListImpl(node);
+      }
+      else if (type == IDENTIFIER) {
+        return new PaxIdentifierImpl(node);
       }
       else if (type == INNER_NODES) {
         return new PaxInnerNodesImpl(node);

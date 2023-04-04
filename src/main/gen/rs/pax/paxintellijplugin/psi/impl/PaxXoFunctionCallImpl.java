@@ -29,6 +29,12 @@ public class PaxXoFunctionCallImpl extends ASTWrapperPsiElement implements PaxXo
 
   @Override
   @NotNull
+  public List<PaxIdentifier> getIdentifierList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, PaxIdentifier.class);
+  }
+
+  @Override
+  @NotNull
   public PaxXoFunctionArgsList getXoFunctionArgsList() {
     return findNotNullChildByClass(PaxXoFunctionArgsList.class);
   }

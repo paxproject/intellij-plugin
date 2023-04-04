@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface PaxXoObject extends PsiElement {
 
+  @Nullable
+  PaxIdentifier getIdentifier();
+
   @NotNull
   List<PaxXoObjectSettingsKeyValuePair> getXoObjectSettingsKeyValuePairList();
-
-  @Nullable
-  PsiElement getIdentifier();
 
 }

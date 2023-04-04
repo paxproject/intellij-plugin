@@ -41,8 +41,8 @@ public class PaxAttributeKeyValuePairImpl extends ASTWrapperPsiElement implement
 
   @Override
   @Nullable
-  public PsiElement getIdentifier() {
-    return findChildByType(IDENTIFIER);
+  public PaxIdentifier getIdentifier() {
+    return findChildByClass(PaxIdentifier.class);
   }
 
 }

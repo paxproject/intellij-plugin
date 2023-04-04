@@ -27,4 +27,10 @@ public class PaxClosingTagImpl extends ASTWrapperPsiElement implements PaxClosin
     else super.accept(visitor);
   }
 
+  @Override
+  @NotNull
+  public PsiElement getPascalidentifier() {
+    return findNotNullChildByType(PASCALIDENTIFIER);
+  }
+
 }

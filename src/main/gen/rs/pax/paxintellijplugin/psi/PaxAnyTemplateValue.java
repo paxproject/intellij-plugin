@@ -11,9 +11,9 @@ public interface PaxAnyTemplateValue extends PsiElement {
   PaxExpressionWrapped getExpressionWrapped();
 
   @Nullable
-  PaxLiteralValue getLiteralValue();
+  PaxIdentifier getIdentifier();
 
   @Nullable
-  PsiElement getIdentifier();
+  PaxLiteralValue getLiteralValue();
 
 }

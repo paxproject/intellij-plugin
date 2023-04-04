@@ -8,6 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface PaxXoFunctionCall extends PsiElement {
 
   @NotNull
+  List<PaxIdentifier> getIdentifierList();
+
+  @NotNull
   PaxXoFunctionArgsList getXoFunctionArgsList();
 
 }

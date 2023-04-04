@@ -11,14 +11,14 @@ import static rs.pax.paxintellijplugin.psi.PaxTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import rs.pax.paxintellijplugin.psi.*;
 
-public class PaxLiteralFunctionImpl extends ASTWrapperPsiElement implements PaxLiteralFunction {
+public class PaxIdentifierImpl extends ASTWrapperPsiElement implements PaxIdentifier {
 
-  public PaxLiteralFunctionImpl(@NotNull ASTNode node) {
+  public PaxIdentifierImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PaxVisitor visitor) {
-    visitor.visitLiteralFunction(this);
+    visitor.visitIdentifier(this);
   }
 
   @Override
@@ -28,9 +28,15 @@ public class PaxLiteralFunctionImpl extends ASTWrapperPsiElement implements PaxL
   }
 
   @Override
-  @NotNull
-  public PaxIdentifier getIdentifier() {
-    return findNotNullChildByClass(PaxIdentifier.class);
+  @Nullable
+  public PsiElement getLoweridentifier() {
+    return findChildByType(LOWERIDENTIFIER);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getPascalidentifier() {
+    return findChildByType(PASCALIDENTIFIER);
   }
 
 }

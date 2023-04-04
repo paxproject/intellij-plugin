@@ -35,14 +35,14 @@ public class PaxAnyTemplateValueImpl extends ASTWrapperPsiElement implements Pax
 
   @Override
   @Nullable
-  public PaxLiteralValue getLiteralValue() {
-    return findChildByClass(PaxLiteralValue.class);
+  public PaxIdentifier getIdentifier() {
+    return findChildByClass(PaxIdentifier.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getIdentifier() {
-    return findChildByType(IDENTIFIER);
+  public PaxLiteralValue getLiteralValue() {
+    return findChildByClass(PaxLiteralValue.class);
   }
 
 }

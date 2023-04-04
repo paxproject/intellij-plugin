@@ -8,9 +8,9 @@ import com.intellij.psi.PsiElement;
 public interface PaxLiteralTupleAccess extends PsiElement {
 
   @NotNull
-  PaxLiteralNumberInteger getLiteralNumberInteger();
+  PaxIdentifier getIdentifier();
 
   @NotNull
-  PsiElement getIdentifier();
+  PaxLiteralNumberInteger getLiteralNumberInteger();
 
 }

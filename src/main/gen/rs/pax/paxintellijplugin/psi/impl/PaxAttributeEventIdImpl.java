@@ -29,8 +29,8 @@ public class PaxAttributeEventIdImpl extends ASTWrapperPsiElement implements Pax
 
   @Override
   @NotNull
-  public PsiElement getIdentifier() {
-    return findNotNullChildByType(IDENTIFIER);
+  public PaxIdentifier getIdentifier() {
+    return findNotNullChildByClass(PaxIdentifier.class);
   }
 
 }

@@ -1,5 +1,7 @@
 package rs.pax.paxintellijplugin;
 
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
@@ -11,15 +13,21 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Map;
 
+import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
+
 
 public class PaxColorSettingsPage implements ColorSettingsPage {
 
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
-            new AttributesDescriptor("Root Tag", PaxSyntaxHighlighter.TEMPLATE),
             new AttributesDescriptor("Pascal Identifier", PaxSyntaxHighlighter.PASCAL_IDENTIFIER),
             new AttributesDescriptor("Identifier", PaxSyntaxHighlighter.IDENTIFIER),
+            new AttributesDescriptor("Block Declaration", PaxSyntaxHighlighter.BLOCK),
+            new AttributesDescriptor("STRING", PaxSyntaxHighlighter.STRING),
+            new AttributesDescriptor("Number", PaxSyntaxHighlighter.NUMBER),
+            new AttributesDescriptor("Comment", PaxSyntaxHighlighter.COMMENT),
             new AttributesDescriptor("Bad value", PaxSyntaxHighlighter.BAD_CHARACTER)
-    };
+
+};
 
     @Nullable
     @Override

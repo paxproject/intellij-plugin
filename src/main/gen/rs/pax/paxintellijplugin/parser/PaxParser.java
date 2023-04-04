@@ -56,7 +56,7 @@ public class PaxParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NONE_, ANY_TEMPLATE_VALUE, "<any template value>");
     r = literal_value(b, l + 1);
     if (!r) r = expression_wrapped(b, l + 1);
-    if (!r) r = consumeToken(b, IDENTIFIER);
+    if (!r) r = identifier(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -82,7 +82,8 @@ public class PaxParser implements PsiParser, LightPsiParser {
     if (!nextTokenIs(b, AT)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, AT, IDENTIFIER);
+    r = consumeToken(b, AT);
+    r = r && identifier(b, l + 1);
     exit_section_(b, m, ATTRIBUTE_EVENT_ID, r);
     return r;
   }
@@ -91,7 +92,6 @@ public class PaxParser implements PsiParser, LightPsiParser {
   // attribute_event_binding | (identifier '=' any_template_value)
   public static boolean attribute_key_value_pair(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "attribute_key_value_pair")) return false;
-    if (!nextTokenIs(b, "<attribute key value pair>", AT, IDENTIFIER)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, ATTRIBUTE_KEY_VALUE_PAIR, "<attribute key value pair>");
     r = attribute_event_binding(b, l + 1);
@@ -105,47 +105,46 @@ public class PaxParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "attribute_key_value_pair_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, IDENTIFIER, EQ);
+    r = identifier(b, l + 1);
+    r = r && consumeToken(b, EQ);
     r = r && any_template_value(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   /* ********************************************************** */
-  // '<'  '/'  '>'
+  // '<'  '/' pascalidentifier '>'
   public static boolean closing_tag(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "closing_tag")) return false;
     if (!nextTokenIs(b, XO_REL_LT)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, XO_REL_LT, XO_DIV, XO_REL_GT);
+    r = consumeTokens(b, 0, XO_REL_LT, XO_DIV, PASCALIDENTIFIER, XO_REL_GT);
     exit_section_(b, m, CLOSING_TAG, r);
     return r;
   }
 
   /* ********************************************************** */
-  // '@'  "events"  '{'  events_key_value_pair*  '}'
+  // events '{'  events_key_value_pair*  '}'
   public static boolean events_block_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "events_block_declaration")) return false;
-    if (!nextTokenIs(b, AT)) return false;
+    if (!nextTokenIs(b, EVENTS)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, AT);
-    r = r && consumeToken(b, "events");
-    r = r && consumeToken(b, LCURLY);
-    r = r && events_block_declaration_3(b, l + 1);
+    r = consumeTokens(b, 0, EVENTS, LCURLY);
+    r = r && events_block_declaration_2(b, l + 1);
     r = r && consumeToken(b, RCURLY);
     exit_section_(b, m, EVENTS_BLOCK_DECLARATION, r);
     return r;
   }
 
   // events_key_value_pair*
-  private static boolean events_block_declaration_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "events_block_declaration_3")) return false;
+  private static boolean events_block_declaration_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "events_block_declaration_2")) return false;
     while (true) {
       int c = current_position_(b);
       if (!events_key_value_pair(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "events_block_declaration_3", c)) break;
+      if (!empty_element_parsed_guard_(b, "events_block_declaration_2", c)) break;
     }
     return true;
   }
@@ -154,11 +153,12 @@ public class PaxParser implements PsiParser, LightPsiParser {
   // identifier  ':'
   public static boolean events_key(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "events_key")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<events key>", LOWERIDENTIFIER, PASCALIDENTIFIER)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, IDENTIFIER, COLON);
-    exit_section_(b, m, EVENTS_KEY, r);
+    Marker m = enter_section_(b, l, _NONE_, EVENTS_KEY, "<events key>");
+    r = identifier(b, l + 1);
+    r = r && consumeToken(b, COLON);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -166,13 +166,13 @@ public class PaxParser implements PsiParser, LightPsiParser {
   // events_key  events_value  ','?
   public static boolean events_key_value_pair(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "events_key_value_pair")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<events key value pair>", LOWERIDENTIFIER, PASCALIDENTIFIER)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, EVENTS_KEY_VALUE_PAIR, "<events key value pair>");
     r = events_key(b, l + 1);
     r = r && events_value(b, l + 1);
     r = r && events_key_value_pair_2(b, l + 1);
-    exit_section_(b, m, EVENTS_KEY_VALUE_PAIR, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -315,6 +315,19 @@ public class PaxParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // loweridentifier | pascalidentifier
+  public static boolean identifier(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "identifier")) return false;
+    if (!nextTokenIs(b, "<identifier>", LOWERIDENTIFIER, PASCALIDENTIFIER)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, IDENTIFIER, "<identifier>");
+    r = consumeToken(b, LOWERIDENTIFIER);
+    if (!r) r = consumeToken(b, PASCALIDENTIFIER);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // node_inner_content | (any_tag_pair)*
   public static boolean inner_nodes(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "inner_nodes")) return false;
@@ -411,7 +424,8 @@ public class PaxParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "literal_enum_value_1_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, SUBCLASS, IDENTIFIER);
+    r = consumeToken(b, SUBCLASS);
+    r = r && identifier(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -442,7 +456,7 @@ public class PaxParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, LITERAL_FUNCTION, "<literal function>");
     r = literal_function_0(b, l + 1);
-    r = r && consumeToken(b, IDENTIFIER);
+    r = r && identifier(b, l + 1);
     r = r && literal_function_2(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -652,12 +666,13 @@ public class PaxParser implements PsiParser, LightPsiParser {
   // identifier  '.'  literal_number_integer
   public static boolean literal_tuple_access(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "literal_tuple_access")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<literal tuple access>", LOWERIDENTIFIER, PASCALIDENTIFIER)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, IDENTIFIER, DOT);
+    Marker m = enter_section_(b, l, _NONE_, LITERAL_TUPLE_ACCESS, "<literal tuple access>");
+    r = identifier(b, l + 1);
+    r = r && consumeToken(b, DOT);
     r = r && literal_number_integer(b, l + 1);
-    exit_section_(b, m, LITERAL_TUPLE_ACCESS, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -784,7 +799,7 @@ public class PaxParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, SELECTOR, "<selector>");
     r = selector_0(b, l + 1);
-    r = r && consumeToken(b, IDENTIFIER);
+    r = r && identifier(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
@@ -837,28 +852,26 @@ public class PaxParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // '@'  "settings"  '{' selector_block*  '}'
+  // settings  '{' selector_block*  '}'
   public static boolean settings_block_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "settings_block_declaration")) return false;
-    if (!nextTokenIs(b, AT)) return false;
+    if (!nextTokenIs(b, SETTINGS)) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeToken(b, AT);
-    r = r && consumeToken(b, "settings");
-    r = r && consumeToken(b, LCURLY);
-    r = r && settings_block_declaration_3(b, l + 1);
+    r = consumeTokens(b, 0, SETTINGS, LCURLY);
+    r = r && settings_block_declaration_2(b, l + 1);
     r = r && consumeToken(b, RCURLY);
     exit_section_(b, m, SETTINGS_BLOCK_DECLARATION, r);
     return r;
   }
 
   // selector_block*
-  private static boolean settings_block_declaration_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "settings_block_declaration_3")) return false;
+  private static boolean settings_block_declaration_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "settings_block_declaration_2")) return false;
     while (true) {
       int c = current_position_(b);
       if (!selector_block(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "settings_block_declaration_3", c)) break;
+      if (!empty_element_parsed_guard_(b, "settings_block_declaration_2", c)) break;
     }
     return true;
   }
@@ -867,11 +880,12 @@ public class PaxParser implements PsiParser, LightPsiParser {
   // identifier  ':'
   public static boolean settings_key(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "settings_key")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<settings key>", LOWERIDENTIFIER, PASCALIDENTIFIER)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, IDENTIFIER, COLON);
-    exit_section_(b, m, SETTINGS_KEY, r);
+    Marker m = enter_section_(b, l, _NONE_, SETTINGS_KEY, "<settings key>");
+    r = identifier(b, l + 1);
+    r = r && consumeToken(b, COLON);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -879,13 +893,13 @@ public class PaxParser implements PsiParser, LightPsiParser {
   // settings_key  settings_value  ','?
   public static boolean settings_key_value_pair(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "settings_key_value_pair")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<settings key value pair>", LOWERIDENTIFIER, PASCALIDENTIFIER)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, SETTINGS_KEY_VALUE_PAIR, "<settings key value pair>");
     r = settings_key(b, l + 1);
     r = r && settings_value(b, l + 1);
     r = r && settings_key_value_pair_2(b, l + 1);
-    exit_section_(b, m, SETTINGS_KEY_VALUE_PAIR, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -945,10 +959,9 @@ public class PaxParser implements PsiParser, LightPsiParser {
   //     ('('  identifier  ',' identifier ')')
   public static boolean statement_for_predicate_declaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "statement_for_predicate_declaration")) return false;
-    if (!nextTokenIs(b, "<statement for predicate declaration>", IDENTIFIER, LPAREN)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, STATEMENT_FOR_PREDICATE_DECLARATION, "<statement for predicate declaration>");
-    r = consumeToken(b, IDENTIFIER);
+    r = identifier(b, l + 1);
     if (!r) r = statement_for_predicate_declaration_1(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -959,7 +972,11 @@ public class PaxParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "statement_for_predicate_declaration_1")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, LPAREN, IDENTIFIER, COMMA, IDENTIFIER, RPAREN);
+    r = consumeToken(b, LPAREN);
+    r = r && identifier(b, l + 1);
+    r = r && consumeToken(b, COMMA);
+    r = r && identifier(b, l + 1);
+    r = r && consumeToken(b, RPAREN);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1052,13 +1069,13 @@ public class PaxParser implements PsiParser, LightPsiParser {
   // identifier  (('::')  identifier)*  ('(' xo_function_args_list ')')
   public static boolean xo_function_call(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "xo_function_call")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<xo function call>", LOWERIDENTIFIER, PASCALIDENTIFIER)) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, IDENTIFIER);
+    Marker m = enter_section_(b, l, _NONE_, XO_FUNCTION_CALL, "<xo function call>");
+    r = identifier(b, l + 1);
     r = r && xo_function_call_1(b, l + 1);
     r = r && xo_function_call_2(b, l + 1);
-    exit_section_(b, m, XO_FUNCTION_CALL, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -1079,7 +1096,7 @@ public class PaxParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, SUBCLASS);
-    r = r && consumeToken(b, IDENTIFIER);
+    r = r && identifier(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
@@ -1110,7 +1127,7 @@ public class PaxParser implements PsiParser, LightPsiParser {
   //     xo_rel_lt |
   //     xo_rel_lte |
   //     xo_rel_neq |
-  //     xo_sub |
+  //     xo_neg |
   //     xo_tern_then |
   //     xo_tern_else
   public static boolean xo_infix(PsiBuilder b, int l) {
@@ -1130,7 +1147,7 @@ public class PaxParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, XO_REL_LT);
     if (!r) r = consumeToken(b, XO_REL_LTE);
     if (!r) r = consumeToken(b, XO_REL_NEQ);
-    if (!r) r = consumeToken(b, XO_SUB);
+    if (!r) r = consumeToken(b, XO_NEG);
     if (!r) r = consumeToken(b, XO_TERN_THEN);
     if (!r) r = consumeToken(b, XO_TERN_ELSE);
     exit_section_(b, l, m, r, false, null);
@@ -1157,7 +1174,6 @@ public class PaxParser implements PsiParser, LightPsiParser {
   // identifier?  '{' xo_object_settings_key_value_pair*  '}'
   public static boolean xo_object(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "xo_object")) return false;
-    if (!nextTokenIs(b, "<xo object>", IDENTIFIER, LCURLY)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, XO_OBJECT, "<xo object>");
     r = xo_object_0(b, l + 1);
@@ -1171,7 +1187,7 @@ public class PaxParser implements PsiParser, LightPsiParser {
   // identifier?
   private static boolean xo_object_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "xo_object_0")) return false;
-    consumeToken(b, IDENTIFIER);
+    identifier(b, l + 1);
     return true;
   }
 
@@ -1190,13 +1206,13 @@ public class PaxParser implements PsiParser, LightPsiParser {
   // settings_key  expression_body  ','?
   public static boolean xo_object_settings_key_value_pair(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "xo_object_settings_key_value_pair")) return false;
-    if (!nextTokenIs(b, IDENTIFIER)) return false;
+    if (!nextTokenIs(b, "<xo object settings key value pair>", LOWERIDENTIFIER, PASCALIDENTIFIER)) return false;
     boolean r;
-    Marker m = enter_section_(b);
+    Marker m = enter_section_(b, l, _NONE_, XO_OBJECT_SETTINGS_KEY_VALUE_PAIR, "<xo object settings key value pair>");
     r = settings_key(b, l + 1);
     r = r && expression_body(b, l + 1);
     r = r && xo_object_settings_key_value_pair_2(b, l + 1);
-    exit_section_(b, m, XO_OBJECT_SETTINGS_KEY_VALUE_PAIR, r);
+    exit_section_(b, l, m, r, false, null);
     return r;
   }
 
@@ -1281,11 +1297,10 @@ public class PaxParser implements PsiParser, LightPsiParser {
   // '$'?  identifier  (('.'  identifier) | ('['  expression_body  ']') )*
   public static boolean xo_symbol(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "xo_symbol")) return false;
-    if (!nextTokenIs(b, "<xo symbol>", IDENTIFIER, XO_DOLLAR)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, XO_SYMBOL, "<xo symbol>");
     r = xo_symbol_0(b, l + 1);
-    r = r && consumeToken(b, IDENTIFIER);
+    r = r && identifier(b, l + 1);
     r = r && xo_symbol_2(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -1325,7 +1340,8 @@ public class PaxParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "xo_symbol_2_0_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = consumeTokens(b, 0, DOT, IDENTIFIER);
+    r = consumeToken(b, DOT);
+    r = r && identifier(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }

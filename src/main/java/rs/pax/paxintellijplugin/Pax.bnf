@@ -14,7 +14,7 @@
 
   tokens=[
       pascalidentifier='regexp:[A-Z]\w*'
-      identifier='regexp:\p{Alpha}\w*'
+      loweridentifier='regexp:[a-z]\w*'
       asciidigit='regexp:\d'
       stringlit='regexp:"([^"\\]|\\.)*"'
       eq="="
@@ -25,9 +25,9 @@
       lcurly="{"
       comma=','
       at="@"
-      xoadd="+"
-      xobool_and="&&"
-      xobool_or="||"
+      xo_add="+"
+      xo_bool_and="&&"
+      xo_bool_or="||"
       xo_div = "/"
       xo_exp = "^"
       xo_mod = "%%"
@@ -57,10 +57,14 @@
       slot_keyword="slot"
       space='regexp:\s+'
       comment='regexp:((/[*])([\s\S]+)([*]/))|([/]{2}[^\n]+)'
+      events="@events"
+      settings="@settings"
       any="regexp:."
     ]
 }
 paxFile ::= pax_component_definition*
+
+identifier ::= loweridentifier | pascalidentifier
 
 // This grammar is based off Pax Language PEG (see: pax/pax-compiler/src/pax.pest)
 
@@ -73,7 +77,7 @@ any_template_value ::= literal_value | expression_wrapped | identifier
  matched_tag ::= open_tag  inner_nodes  closing_tag
 
 open_tag ::= '<' pascalidentifier  attribute_key_value_pair*  '>'
-closing_tag ::= {'<'  '/'  '>'}
+closing_tag ::= {'<'  '/' pascalidentifier '>'}
 inner_nodes ::= { node_inner_content | (any_tag_pair)* }
 node_inner_content ::= { literal_value | expression_wrapped }
 
@@ -87,7 +91,7 @@ self_closing_tag ::= '<'  pascalidentifier  attribute_key_value_pair*  '/'  '>'
 
 /// BEGIN SETTINGS
 
-settings_block_declaration ::= {'@'  "settings"  '{' selector_block*  '}'}
+settings_block_declaration ::= {settings  '{' selector_block*  '}'}
 selector_block ::= {selector  literal_object}
 literal_object ::= { pascalidentifier?  '{'  settings_key_value_pair*  '}' }
 
@@ -99,7 +103,7 @@ settings_value ::= { literal_value | literal_object | expression_wrapped }
 
 /// BEGIN EVENTS
 
-events_block_declaration ::= {'@'  "events"  '{'  events_key_value_pair*  '}'}
+events_block_declaration ::= {events '{'  events_key_value_pair*  '}'}
 events_key_value_pair ::= { events_key  events_value  ','? }
 events_key ::= { identifier  ':' }
 events_value ::= { literal_function | function_list }
@@ -147,7 +151,7 @@ xo_infix ::= {
     xo_rel_lt |
     xo_rel_lte |
     xo_rel_neq |
-    xo_sub |
+    xo_neg |
     xo_tern_then |
     xo_tern_else
 }

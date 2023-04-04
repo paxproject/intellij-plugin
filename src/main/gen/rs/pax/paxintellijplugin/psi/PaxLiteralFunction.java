@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface PaxLiteralFunction extends PsiElement {
 
   @NotNull
-  PsiElement getIdentifier();
+  PaxIdentifier getIdentifier();
 
 }
