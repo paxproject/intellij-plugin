@@ -1,8 +1,8 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.warfaj.paxintellijplugin</id>
-    <name>Pax</name>
-    <vendor>warfaj</vendor>
+    <name>Pax for Rust</name>
+    <vendor>Pax Corp Inc.</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
