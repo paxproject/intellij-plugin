@@ -5,7 +5,12 @@
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/21408.svg)](https://plugins.jetbrains.com/plugin/21408)
 
 <!-- Plugin description -->
-The plugin provides support in CLion for [Pax](www.pax.rs)
+**Pax for Rust** provides support in CLion for writing [Pax](www.pax.rs).
+ This currently includes custom syntax highlighting for your .pax files. Just install it and you're good to go!
+
+Future work:
+- Annotations
+- Code completion
 <!-- Plugin description end -->
 
 ## Installation
