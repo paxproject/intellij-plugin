@@ -1,11 +1,11 @@
-# Pax for Rust Plugin
+# Pax Plugin
 
 ![Build](https://github.com/warfaj/pax-intellij-plugin/workflows/Build/badge.svg)
 [![Version](https://img.shields.io/jetbrains/plugin/v/21408.svg)](https://plugins.jetbrains.com/plugin/21408)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/21408.svg)](https://plugins.jetbrains.com/plugin/21408)
 
 <!-- Plugin description -->
-**Pax for Rust** provides support in CLion for writing Pax.
+**Pax** provides support in CLion for writing Pax.
  This currently includes custom syntax highlighting for your .pax files. Just install it and you're good to go!
 
 Future work:
